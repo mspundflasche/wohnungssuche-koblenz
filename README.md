@@ -1,5 +1,7 @@
 # Wohnungssuche Koblenz
 
+Live: https://wohnungssuche-koblenz.vercel.app
+
 Webseite zur täglichen Suche nach Wohnungen und Häusern (Miete und Kauf) in Koblenz und Umgebung für eine 4-köpfige Familie mit Home-Office-Bedarf.
 
 - **Tägliche Suche:** eine geplante Claude-Aufgabe (jeden Morgen 6:38 Uhr) durchsucht immosuchmaschine.de, ohne-makler.net und die Websuche, filtert nach dem Suchprofil, bewertet jedes Angebot (Passung 0–100) und schreibt alles über den Supabase-Connector in die Datenbank. Der Prompt liegt in [`docs/taegliche-suche.md`](docs/taegliche-suche.md).
@@ -9,9 +11,9 @@ Webseite zur täglichen Suche nach Wohnungen und Häusern (Miete und Kauf) in Ko
 
 ## Einrichtung
 
-1. Supabase: Migrationen aus `supabase/migrations/` ausführen (im Projekt `wohnungssuche-koblenz` bereits erledigt).
-2. Supabase → Authentication → URL Configuration: **Site URL** auf die Vercel-Adresse setzen und `https://<vercel-adresse>/**` unter **Redirect URLs** eintragen.
-3. Vercel: Repository importieren, Umgebungsvariablen setzen:
+1. Supabase: Migrationen aus `supabase/migrations/` ausführen (im Projekt `wohnungssuche-koblenz`, Region Frankfurt, bereits erledigt).
+2. Supabase → Authentication → URL Configuration: **Site URL** `https://wohnungssuche-koblenz.vercel.app`, unter **Redirect URLs** `https://wohnungssuche-koblenz.vercel.app/**` eintragen.
+3. Vercel (erledigt, Projekt `wohnungssuche-koblenz`, Funktionen in Frankfurt): jeder Push auf `main` geht automatisch live. Umgebungsvariablen:
    - `NEXT_PUBLIC_SUPABASE_URL`
    - `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY`
 4. Erste E-Mail-Adresse freischalten (SQL-Editor): `insert into public.app_members (email, display_name) values ('du@example.org', 'Name');` – weitere Personen danach auf der Seite „Suchprofil“.
