@@ -1,0 +1,161 @@
+@import "tailwindcss";
+
+/*
+  Gestaltung: Schieferdach, Kalkputz und das gelbe Ortsschild.
+  - Kalk (#ECEFEC) als ruhige, kühle Fläche statt Creme
+  - Schiefer (#22303A) als Schrift, Rhein (#1C5D80) für Aktionen
+  - Ortsschild-Gelb (#F5C400) ist das eine laute Element: die Ortsnamen
+  - Diagrammfarben folgen der geprüften Palette (Blau/Orange/Aqua + Grau)
+*/
+
+@theme {
+  --color-kalk: #eceeeb;
+  --color-papier: #ffffff;
+  --color-schiefer: #22303a;
+  --color-schiefer-2: #55636d;
+  --color-schiefer-3: #87949c;
+  --color-linie: #d2d8d5;
+  --color-linie-2: #e5e9e7;
+  --color-rhein: #1c5d80;
+  --color-rhein-dunkel: #144863;
+  --color-rhein-hell: #dbe8f0;
+  --color-ortsschild: #f5c400;
+  --color-schild-schrift: #1a1a1a;
+
+  /* Datenfarben (validiert: CVD-ΔE ≥ 26 zwischen Blau und Orange) */
+  --color-positiv: #257de0;
+  --color-negativ: #f47230;
+  --color-gemischt: #00b894;
+  --color-unbewertet: #7d8a92;
+
+  /* Text auf weiß: ≥ 4,5:1 */
+  --color-gut: #006c10;
+  --color-warn: #a8361a;
+
+  --font-sans: "Barlow", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --font-cond: "Barlow Condensed", "Barlow", system-ui, sans-serif;
+}
+
+:root {
+  color-scheme: light;
+}
+
+html {
+  background: var(--color-kalk);
+  color: var(--color-schiefer);
+  -webkit-font-smoothing: antialiased;
+}
+
+body {
+  font-family: var(--font-sans);
+  font-size: 1rem;
+  line-height: 1.5;
+}
+
+/* Sichtbarer Tastaturfokus überall */
+:focus-visible {
+  outline: 2px solid var(--color-rhein);
+  outline-offset: 2px;
+  border-radius: 4px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+/* ---- Ortsschild ---------------------------------------------------- */
+.ortsschild {
+  display: inline-flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-width: 6.25rem;
+  max-width: 100%;
+  padding: 0.3rem 0.6rem 0.35rem;
+  background: var(--color-ortsschild);
+  color: var(--color-schild-schrift);
+  border-radius: 7px;
+  /* gelber Rand, dann die schwarze Innenlinie wie beim echten Schild */
+  box-shadow:
+    inset 0 0 0 2px var(--color-ortsschild),
+    inset 0 0 0 3.5px var(--color-schild-schrift);
+  font-family: var(--font-cond);
+  text-align: center;
+  line-height: 1.05;
+}
+.ortsschild-name {
+  font-weight: 700;
+  font-size: 1.05rem;
+  letter-spacing: 0.01em;
+  overflow-wrap: anywhere;
+}
+.ortsschild-sub {
+  font-weight: 500;
+  font-size: 0.7rem;
+  margin-top: 0.1rem;
+}
+.ortsschild-lg {
+  min-width: 14rem;
+  padding: 0.7rem 1.4rem 0.8rem;
+  border-radius: 12px;
+  box-shadow:
+    inset 0 0 0 4px var(--color-ortsschild),
+    inset 0 0 0 7px var(--color-schild-schrift);
+}
+.ortsschild-lg .ortsschild-name {
+  font-size: 2.6rem;
+}
+.ortsschild-lg .ortsschild-sub {
+  font-size: 1rem;
+}
+.ortsschild-muted {
+  background: #e8e3cf;
+  box-shadow:
+    inset 0 0 0 2px #e8e3cf,
+    inset 0 0 0 3.5px #8f8a78;
+  color: #4e4a3f;
+}
+
+/* ---- Leaflet-Anpassungen ------------------------------------------ */
+.leaflet-container {
+  font-family: var(--font-sans);
+  background: #e4e8e6;
+}
+.leaflet-tooltip.karten-tooltip {
+  border: 1px solid var(--color-linie);
+  border-radius: 6px;
+  box-shadow: 0 2px 8px rgba(34, 48, 58, 0.12);
+  color: var(--color-schiefer);
+  padding: 6px 8px;
+  font-size: 0.85rem;
+}
+
+/* ---- Diagramme ---------------------------------------------------- */
+.recharts-wrapper :focus {
+  outline: none;
+}
+.chart-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.85rem;
+  font-variant-numeric: tabular-nums;
+}
+.chart-table th,
+.chart-table td {
+  text-align: left;
+  padding: 0.3rem 0.5rem;
+  border-bottom: 1px solid var(--color-linie-2);
+}
+.chart-table td.num,
+.chart-table th.num {
+  text-align: right;
+}
+.recharts-cartesian-axis-tick-value {
+  font-variant-numeric: tabular-nums;
+}
