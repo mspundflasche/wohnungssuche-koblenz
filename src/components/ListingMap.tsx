@@ -11,23 +11,26 @@ import type { Listing, Verdict } from "@/lib/types";
   Grundkarte:
   - Ohne Schlüssel: OpenStreetMap-Standardkacheln (kein API-Schlüssel nötig, Namensnennung Pflicht,
     nur normales Anzeigen – kein Vorladen ganzer Gebiete, siehe operations.osmfoundation.org/policies/tiles).
-  - Mit NEXT_PUBLIC_CARTO_BASEMAP_KEY: ruhigere CARTO-Karte „Voyager“ (kostenloser Schlüssel unter
-    carto.com/basemaps/apikey).
+  - Mit NEXT_CARTO_BASEMAP_KEY (vom Server übergeben): ruhigere CARTO-Karte „Voyager“
+    (kostenloser Schlüssel unter carto.com/basemaps/apikey).
 */
 const OSM_ATTRIBUTION = '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>-Mitwirkende';
-const CARTO_KEY = process.env.NEXT_PUBLIC_CARTO_BASEMAP_KEY;
-const BASEMAP = CARTO_KEY
-  ? {
-      url: `https://basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png?key=${encodeURIComponent(CARTO_KEY)}`,
+
+function basemapFor(cartoKey: string | null) {
+  if (cartoKey) {
+    return {
+      url: `https://basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png?key=${encodeURIComponent(cartoKey)}`,
       attribution: `${OSM_ATTRIBUTION}, &copy; <a href="https://carto.com/attribution/">CARTO</a>`,
       className: "",
-    }
-  : {
-      url: "https://tile.openstreetmap.org/{z}/{x}/{y}.png",
-      attribution: OSM_ATTRIBUTION,
-      // etwas entsättigt, damit die farbigen Pins hervortreten
-      className: "karte-ruhig",
     };
+  }
+  return {
+    url: "https://tile.openstreetmap.org/{z}/{x}/{y}.png",
+    attribution: OSM_ATTRIBUTION,
+    // etwas entsättigt, damit die farbigen Pins hervortreten
+    className: "karte-ruhig",
+  };
+}
 
 export interface MapProps {
   listings: Listing[];
@@ -37,6 +40,8 @@ export interface MapProps {
   selectedId: string | null;
   hoveredId: string | null;
   onSelect: (id: string) => void;
+  /** CARTO-Schlüssel aus NEXT_CARTO_BASEMAP_KEY; ohne Schlüssel OpenStreetMap. */
+  basemapKey: string | null;
 }
 
 function AttributionPrefix() {
@@ -60,7 +65,8 @@ function FlyToSelected({ listing }: { listing: Listing | undefined }) {
   return null;
 }
 
-export default function ListingMap({ listings, verdicts, center, radiusKm, selectedId, hoveredId, onSelect }: MapProps) {
+export default function ListingMap({ listings, verdicts, center, radiusKm, selectedId, hoveredId, onSelect, basemapKey }: MapProps) {
+  const basemap = basemapFor(basemapKey);
   const located = listings.filter((l) => l.lat != null && l.lng != null);
   const selected = located.find((l) => l.id === selectedId);
   // Hervorgehobene Pins zuletzt zeichnen, damit sie oben liegen.
@@ -72,7 +78,7 @@ export default function ListingMap({ listings, verdicts, center, radiusKm, selec
 
   return (
     <MapContainer center={center} zoom={10} scrollWheelZoom className="h-full w-full" attributionControl>
-      <TileLayer key={BASEMAP.url} url={BASEMAP.url} attribution={BASEMAP.attribution} maxZoom={19} className={BASEMAP.className} />
+      <TileLayer key={basemap.url} url={basemap.url} attribution={basemap.attribution} maxZoom={19} className={basemap.className} />
       <Circle
         center={center}
         radius={radiusKm * 1000}

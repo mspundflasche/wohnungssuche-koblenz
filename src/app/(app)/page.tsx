@@ -20,6 +20,7 @@ export default async function HomePage() {
       members={members}
       user={user}
       demo={isDemo()}
+      basemapKey={process.env.NEXT_CARTO_BASEMAP_KEY?.trim() || null}
     />
   );
 }

@@ -29,6 +29,8 @@ interface Props {
   members: Member[];
   user: CurrentUser;
   demo: boolean;
+  /** CARTO-Schlüssel aus NEXT_CARTO_BASEMAP_KEY (serverseitig gelesen). */
+  basemapKey: string | null;
 }
 
 const PAGE = 25;
@@ -74,7 +76,7 @@ function Segmented<T extends string>({
   );
 }
 
-export function Dashboard({ listings: initialListings, feedback: initialFeedback, profile, runs, members, user, demo }: Props) {
+export function Dashboard({ listings: initialListings, feedback: initialFeedback, profile, runs, members, user, demo, basemapKey }: Props) {
   const [feedback, setFeedback] = useState<Feedback[]>(initialFeedback);
   const [offer, setOffer] = useState<OfferFilter>("alle");
   const [prop, setProp] = useState<PropFilter>("alle");
@@ -261,6 +263,7 @@ export function Dashboard({ listings: initialListings, feedback: initialFeedback
               selectedId={selectedId}
               hoveredId={hoveredId}
               onSelect={selectFromChart}
+              basemapKey={basemapKey}
             />
           </div>
           <ul className="mt-2 flex flex-wrap gap-x-4 gap-y-1 text-sm text-schiefer-2" aria-label="Legende der Karte">

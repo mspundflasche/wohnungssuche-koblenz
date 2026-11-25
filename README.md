@@ -16,7 +16,7 @@ Webseite zur täglichen Suche nach Wohnungen und Häusern (Miete und Kauf) in Ko
 3. Vercel (erledigt, Projekt `wohnungssuche-koblenz`, Funktionen in Frankfurt): jeder Push auf `main` geht automatisch live. Umgebungsvariablen:
    - `NEXT_PUBLIC_SUPABASE_URL`
    - `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY`
-   - optional `NEXT_PUBLIC_CARTO_BASEMAP_KEY` – ohne ihn nutzt die Karte die OpenStreetMap-Kacheln (kein Schlüssel nötig); mit kostenlosem Schlüssel von carto.com/basemaps/apikey die ruhigere CARTO-Karte
+   - optional `NEXT_CARTO_BASEMAP_KEY` – ohne ihn nutzt die Karte die OpenStreetMap-Kacheln (kein Schlüssel nötig); mit kostenlosem Schlüssel von carto.com/basemaps/apikey die ruhigere CARTO-Karte
 4. Erste E-Mail-Adresse freischalten (SQL-Editor): `insert into public.app_members (email, display_name) values ('du@example.org', 'Name');` – weitere Personen danach auf der Seite „Suchprofil“.
 
 ## Lokal ansehen
