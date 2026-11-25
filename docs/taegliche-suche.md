@@ -57,10 +57,12 @@ Nicht versuchen: ImmoScout24, Kleinanzeigen und Immowelt direkt (blockieren auto
 Behalte nur Angebote, die alle harten Kriterien erfüllen (fehlende Werte zählen nicht als Verstoß):
 
 - Angebots- und Objektart laut Profil
-- Preis: Miete warm ≤ `rent_max_warm` (ist nur Kaltmiete bekannt: Kaltmiete + 3 €/m² Nebenkosten schätzen, Schätzung nur zum Filtern verwenden), Kauf ≤ `buy_max_price` × 1,05
+- Preis: Miete: bekannte Warmmiete ≤ `rent_max_warm`; ist nur die Kaltmiete bekannt, muss sie ≤ `rent_max_warm` sein. Kauf ≤ `buy_max_price` × 1,05
 - Zimmer ≥ `min_rooms`, Wohnfläche ≥ `min_area_m2` × 0,95
 - Entfernung zur Koblenzer Mitte ≤ `radius_km`; nicht in `excluded_places`
 - Keine Ferienwohnungen, möblierten Zeitwohnungen, WG-Zimmer, Tauschangebote, Seniorenwohnungen, Gewerbe, Grundstücke ohne Haus, reinen Anlageobjekte/vermieteten Mehrfamilienhäuser, „Mietkauf“-/Bauträger-Werbung ohne konkretes Objekt.
+
+Duplikate: Dasselbe Objekt erscheint oft auf mehreren Portalen (gleicher Ort, Preis, Fläche, ähnlicher Titel). Speichere es nur einmal und bevorzuge die Originalseite (ohne-makler.net, regionalimmobilien24.de, wohnglueck.de) vor `immosuchmaschine.de/expose/…`. Gleiche auch mit `bekannte` ab (Titel und Preis), damit ein Angebot nicht unter zweiter URL neu angelegt wird – dann die bekannte URL verwenden.
 
 ### 4. Anreichern (optional, höchstens 10 Abrufe)
 
@@ -74,12 +76,13 @@ Für die vielversprechendsten **neuen** Treffer (nicht in `bekannte`) das Insera
 - `nein`: zu wenige Zimmer und kein Zusatzraum
 - sonst `unklar`
 
-Punkte (Startwert 50, auf 0–100 begrenzen):
-- Preis: deutlich unter Budget bis +15; nahe am Budget 0; über Budget −10 bis −25
+Punkte (Startwert 40, auf 0–100 begrenzen):
+- Preis: deutlich unter Budget bis +15; nahe am Budget 0; über Budget −10 bis −25. Bei Miete ohne bekannte Warmmiete: Warmmiete ≈ Kaltmiete + 3 €/m² schätzen; liegt die Schätzung über `rent_max_warm`, −10 bis −20 und Grund „Warmmiete vermutlich über Budget (ca. … €)“. Die Schätzung nie als `price_warm` speichern.
 - Platz: jedes Zimmer über Minimum +4 (max. +8); Fläche ≥ 120 m² +4, ≥ 140 m² +7
 - Home-Office: `ja` +12, `moeglich` +5, `unklar` 0, `nein` −30
 - Lage: Entfernung ≤ 5 km +6, ≤ 10 km +3, > 15 km −3; dazu Lernstand: beliebte Orte bis +8, abgelehnte Orte bis −10
 - Wünsche: jedes erfüllte `nice_to_haves` +3 (max. +9); fehlendes `must_haves` −15
+- Bekannte Nachteile: Energieklasse G/H −5, deutlicher Renovierungsbedarf −5, teilweise vermietet oder zwei getrennte Wohneinheiten −5 bis −10, Anbieter nennt eine kleinere Haushaltsgröße −5
 - Lernen aus Feedback (wichtig!): Nutze `feedback.gruende_negativ`, `gruende_positiv`, `merkmale`, `kennzahlen` (Preise/Flächen von „gefällt“ vs. „passt nicht“), `kommentare` und den letzten `lernstand`. Was der Familie mehrfach missfiel (z. B. „Lärm/Verkehr“, „Renovierungsbedarf“, ein Ort, ein Preisbereich), gibt bei ähnlichen Angeboten −5 bis −15; was gefiel, +5 bis +15. Beachte `notes` im Profil.
 
 Schreibe 2–4 kurze `score_reasons` auf Deutsch (z. B. „Eigenes Arbeitszimmer“, „200 € unter Budget“, „Garten“, „Ähnlich wie ein abgelehntes Angebot: Hauptstraße“) und eine `ai_summary` mit 1–2 Sätzen: was passt, was vor einer Besichtigung zu klären ist.
