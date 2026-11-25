@@ -1,6 +1,7 @@
 import "server-only";
 
 import type {
+  ClaudeAbgleich,
   CurrentUser,
   Feedback,
   LearnedPreferences,
@@ -136,6 +137,13 @@ export const demoListings: Listing[] = seeds.map((s, i) => {
       features.includes("garten") ? "Garten wie gewünscht" : "Kein Garten",
     ],
     ai_summary: "Beispiel: Passt gut zur Familie – vier Zimmer plus Arbeitszimmer, Garten, ruhige Lage.",
+    claude_rating: score >= 80 ? 2 : score >= 60 ? 1 : -1,
+    claude_note:
+      score >= 80
+        ? "Beispiel: Das würde ich mir als Erstes ansehen – genug Zimmer für Büro und Kinder, und der Preis lässt Luft."
+        : score >= 60
+          ? "Beispiel: Grundsätzlich passend, aber ich würde vorher Grundriss und Nebenkosten klären."
+          : "Beispiel: Für vier Personen mit Büro zu knapp oder zu teuer – würde ich auslassen.",
     status: daysAgo > 20 ? "weg" : "aktiv",
     pipeline: i === 0 ? "gemerkt" : i === 2 ? "angefragt" : "neu",
     first_seen_at: daysAgoIso(daysAgo),
@@ -243,3 +251,33 @@ export function demoLearnedProfile(): LearnedProfile {
       }),
   };
 }
+
+export const demoAbgleich: ClaudeAbgleich = {
+  verglichen: 7,
+  einig: 5,
+  claude_zu_optimistisch: 1,
+  claude_zu_kritisch: 1,
+  familie_uneinig: 1,
+  abweichungen: [
+    {
+      titel: "Altbauwohnung mit hohen Decken",
+      ort: "Koblenz",
+      angebot: "miete",
+      ergebnis: "claude_zu_optimistisch",
+      claude: 1,
+      claude_notiz: "Beispiel: Schöner Altbau, Büro müsste man klären.",
+      gruende_familie: ["Kein Arbeitszimmer", "Lärm/Verkehr"],
+      kommentare_familie: "Direkt an der Hauptstraße",
+    },
+    {
+      titel: "Doppelhaushälfte in Güls",
+      ort: "Koblenz",
+      angebot: "kauf",
+      ergebnis: "claude_zu_kritisch",
+      claude: -1,
+      claude_notiz: "Beispiel: Etwas weit draußen.",
+      gruende_familie: ["Guter Preis", "Garten"],
+      kommentare_familie: null,
+    },
+  ],
+};

@@ -37,6 +37,9 @@ export interface Listing {
   score: number | null;
   score_reasons: string[];
   ai_summary: string | null;
+  /** Claudes eigene Bewertung auf der Skala der Familie. */
+  claude_rating: Rating | null;
+  claude_note: string | null;
   status: "aktiv" | "weg";
   pipeline: Pipeline;
   first_seen_at: string;
@@ -144,3 +147,21 @@ export interface CurrentUser {
 
 /** Gemeinsame Einschätzung der Familie zu einem Angebot. */
 export type Verdict = "unbewertet" | "positiv" | "negativ" | "gemischt";
+
+export interface ClaudeAbgleich {
+  verglichen: number;
+  einig: number;
+  claude_zu_optimistisch: number;
+  claude_zu_kritisch: number;
+  familie_uneinig: number;
+  abweichungen: {
+    titel: string;
+    ort: string | null;
+    angebot: OfferType;
+    ergebnis: "claude_zu_optimistisch" | "claude_zu_kritisch";
+    claude: Rating;
+    claude_notiz: string | null;
+    gruende_familie: string[] | null;
+    kommentare_familie: string | null;
+  }[];
+}

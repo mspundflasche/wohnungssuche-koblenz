@@ -2,6 +2,7 @@
 
 import { Briefcase } from "lucide-react";
 import Link from "next/link";
+import { ClaudeVerdict } from "./ClaudeVerdict";
 import { FeedbackControl } from "./FeedbackControl";
 import { Ortsschild } from "./Ortsschild";
 import { PriceBlock } from "./PriceBlock";
@@ -105,6 +106,8 @@ export function ListingRow({
           <ScoreMeter score={l.score} />
           {l.score_reasons[0] && <span className="text-sm text-schiefer-2">{l.score_reasons.slice(0, 2).join(", ")}</span>}
         </div>
+
+        <ClaudeVerdict listing={l} />
 
         <FeedbackControl
           listingId={l.id}

@@ -1,6 +1,6 @@
 import { PlacesDiverging, ReasonsBars } from "@/components/charts/LearnCharts";
 import { VERDICT_COLOR } from "@/lib/colors";
-import { getLearned, getLearnedProfile, getRuns } from "@/lib/data";
+import { getClaudeAbgleich, getLearned, getLearnedProfile, getRuns } from "@/lib/data";
 import { OFFER_LABEL, RATING_LABEL, fmtDate, fmtEur, fmtEurM2, fmtKm, fmtM2, fmtNum, fmtTime } from "@/lib/format";
 
 const RULE_LABEL: Record<string, string> = {
@@ -39,7 +39,7 @@ function RuleValue({ value }: { value: unknown }) {
 }
 
 export default async function LernstandPage() {
-  const [learned, profile, runs] = await Promise.all([getLearned(5), getLearnedProfile(), getRuns(30)]);
+  const [learned, profile, runs, abgleich] = await Promise.all([getLearned(5), getLearnedProfile(), getRuns(30), getClaudeAbgleich()]);
   const latest = learned[0];
   const p = profile;
 
@@ -154,6 +154,57 @@ export default async function LernstandPage() {
           )}
         </section>
       )}
+
+      <section aria-labelledby="abgleich" className="mt-14">
+        <h2 id="abgleich" className="font-cond text-3xl font-semibold">
+          Wie gut trifft Claude euren Geschmack?
+        </h2>
+        {abgleich && abgleich.verglichen > 0 ? (
+          <>
+            <p className="mt-2 max-w-[70ch] text-schiefer-2">
+              Claude bewertet jedes Angebot selbst, bevor ihr es seht. Bei{" "}
+              <strong className="text-schiefer">
+                {abgleich.einig} von {abgleich.verglichen}
+              </strong>{" "}
+              Angeboten, die ihr eindeutig bewertet habt, lag Claude mit euch auf einer Linie (
+              {Math.round((abgleich.einig / abgleich.verglichen) * 100)} %). {abgleich.claude_zu_optimistisch}-mal war Claude zu
+              optimistisch, {abgleich.claude_zu_kritisch}-mal zu kritisch.
+              {abgleich.familie_uneinig > 0 && (
+                <>
+                  {" "}
+                  {abgleich.familie_uneinig === 1
+                    ? "Bei einem Angebot wart ihr euch selbst uneinig – das zählt hier nicht."
+                    : `Bei ${abgleich.familie_uneinig} Angeboten wart ihr euch selbst uneinig – die zählen hier nicht.`}
+                </>
+              )}
+            </p>
+            {abgleich.abweichungen.length > 0 && (
+              <ul className="mt-4 divide-y divide-linie-2 rounded-lg border border-linie bg-papier">
+                {abgleich.abweichungen.slice(0, 8).map((a, i) => (
+                  <li key={i} className="px-4 py-3">
+                    <p className="font-medium">
+                      „{a.titel}“{a.ort ? ` in ${a.ort}` : ""}
+                    </p>
+                    <p className="mt-0.5 text-sm text-schiefer-2">
+                      Claude: {RATING_LABEL[a.claude]}, ihr: {a.ergebnis === "claude_zu_optimistisch" ? "passt nicht" : "gefällt"}
+                      {a.gruende_familie && a.gruende_familie.length > 0 && <> – {a.gruende_familie.join(", ")}</>}
+                      {a.kommentare_familie && <> – „{a.kommentare_familie}“</>}
+                    </p>
+                  </li>
+                ))}
+              </ul>
+            )}
+            <p className="mt-3 text-sm text-schiefer-2">
+              Jede Abweichung fließt in die nächste tägliche Suche ein, damit Claudes Einschätzung näher an eure rückt.
+            </p>
+          </>
+        ) : (
+          <p className="mt-2 max-w-[70ch] text-schiefer-2">
+            Claude bewertet jedes Angebot selbst. Sobald ihr Angebote bewertet, die Claude ebenfalls eingeschätzt hat, steht hier,
+            wie oft ihr übereinstimmt.
+          </p>
+        )}
+      </section>
 
       <section aria-labelledby="laeufe" className="mt-14">
         <h2 id="laeufe" className="font-cond text-3xl font-semibold">

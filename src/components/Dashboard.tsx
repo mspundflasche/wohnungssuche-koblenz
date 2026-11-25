@@ -18,8 +18,8 @@ const ListingMap = dynamic(() => import("./ListingMap"), {
 
 type OfferFilter = "alle" | "miete" | "kauf";
 type PropFilter = "alle" | "wohnung" | "haus";
-type VerdictFilter = "alle" | Verdict;
-type SortKey = "passung" | "neu" | "preis" | "flaeche";
+type VerdictFilter = "alle" | "claude" | Verdict;
+type SortKey = "passung" | "claude" | "neu" | "preis" | "flaeche";
 
 interface Props {
   listings: Listing[];
@@ -117,11 +117,15 @@ export function Dashboard({ listings: initialListings, feedback: initialFeedback
       if (!showInactive && (l.status === "weg" || l.pipeline === "aussortiert")) return false;
       if (offer !== "alle" && l.offer_type !== offer) return false;
       if (prop !== "alle" && l.property_type !== prop) return false;
-      if (verdictFilter !== "alle" && verdicts.get(l.id) !== verdictFilter) return false;
+      if (verdictFilter === "claude") {
+        if (!(l.claude_rating != null && l.claude_rating > 0)) return false;
+      } else if (verdictFilter !== "alle" && verdicts.get(l.id) !== verdictFilter) return false;
       return true;
     });
     const by: Record<SortKey, (a: Listing, b: Listing) => number> = {
       passung: (a, b) => (b.score ?? -1) - (a.score ?? -1) || b.first_seen_at.localeCompare(a.first_seen_at),
+      claude: (a, b) =>
+        (b.claude_rating ?? -2) - (a.claude_rating ?? -2) || (b.score ?? -1) - (a.score ?? -1),
       neu: (a, b) => b.first_seen_at.localeCompare(a.first_seen_at),
       preis: (a, b) => (comparablePrice(a) ?? Infinity) - (comparablePrice(b) ?? Infinity),
       flaeche: (a, b) => (b.area_m2 ?? 0) - (a.area_m2 ?? 0),
@@ -221,6 +225,7 @@ export function Dashboard({ listings: initialListings, feedback: initialFeedback
               <option value="positiv">Gefällt</option>
               <option value="gemischt">Uneinig</option>
               <option value="negativ">Passt nicht</option>
+              <option value="claude">Von Claude empfohlen</option>
             </select>
           </label>
           <label className="flex items-center gap-2 text-sm text-schiefer-2">
@@ -231,6 +236,7 @@ export function Dashboard({ listings: initialListings, feedback: initialFeedback
               className="rounded-md border border-linie bg-papier px-2 py-1.5 text-sm font-medium text-schiefer"
             >
               <option value="passung">Passung</option>
+              <option value="claude">Claudes Empfehlung</option>
               <option value="neu">Neueste zuerst</option>
               <option value="preis">Preis aufsteigend</option>
               <option value="flaeche">Größte Fläche</option>

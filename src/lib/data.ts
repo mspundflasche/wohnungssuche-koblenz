@@ -3,6 +3,7 @@ import "server-only";
 import { cache } from "react";
 import { createClient } from "./supabase/server";
 import {
+  demoAbgleich,
   demoFeedback,
   demoLearned,
   demoLearnedProfile,
@@ -13,6 +14,7 @@ import {
   demoUser,
 } from "./demo";
 import type {
+  ClaudeAbgleich,
   CurrentUser,
   Feedback,
   LearnedPreferences,
@@ -30,7 +32,7 @@ export const requestTime = cache(() => Date.now());
 
 /** Spalten ohne die großen Rohdaten. */
 const LISTING_COLUMNS =
-  "id,url,source,title,offer_type,property_type,price,price_warm,previous_price,price_changed_at,area_m2,plot_m2,rooms,price_per_m2,home_office,city,district,postal_code,address,lat,lng,distance_km,year_built,energy_class,features,description,image_url,available_from,provider,score,score_reasons,ai_summary,status,pipeline,first_seen_at,last_seen_at,scored_at";
+  "id,url,source,title,offer_type,property_type,price,price_warm,previous_price,price_changed_at,area_m2,plot_m2,rooms,price_per_m2,home_office,city,district,postal_code,address,lat,lng,distance_km,year_built,energy_class,features,description,image_url,available_from,provider,score,score_reasons,ai_summary,claude_rating,claude_note,status,pipeline,first_seen_at,last_seen_at,scored_at";
 
 export const getCurrentUser = cache(async (): Promise<CurrentUser | null> => {
   if (isDemo()) return demoUser;
@@ -120,4 +122,12 @@ export async function getLearnedProfile(): Promise<LearnedProfile | null> {
   const { data, error } = await supabase.rpc("learned_profile");
   if (error) throw new Error(`Auswertung konnte nicht geladen werden: ${error.message}`);
   return data as LearnedProfile | null;
+}
+
+export async function getClaudeAbgleich(): Promise<ClaudeAbgleich | null> {
+  if (isDemo()) return demoAbgleich;
+  const supabase = await createClient();
+  const { data, error } = await supabase.rpc("claude_abgleich");
+  if (error) throw new Error(`Abgleich konnte nicht geladen werden: ${error.message}`);
+  return data as ClaudeAbgleich | null;
 }

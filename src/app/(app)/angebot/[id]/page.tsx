@@ -2,6 +2,7 @@ import { ArrowLeft, ExternalLink } from "lucide-react";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { ListingDetailClient } from "./ListingDetailClient";
+import { ClaudeVerdict } from "@/components/ClaudeVerdict";
 import { Ortsschild } from "@/components/Ortsschild";
 import { PriceBlock } from "@/components/PriceBlock";
 import { ScoreMeter } from "@/components/ScoreMeter";
@@ -78,10 +79,21 @@ export default async function ListingPage({ params }: PageProps<"/angebot/[id]">
 
       <div className="mt-10 grid gap-10 lg:grid-cols-[minmax(0,3fr)_minmax(0,2fr)]">
         <div className="space-y-10">
+          {l.claude_rating != null && (
+            <section aria-labelledby="claude">
+              <h2 id="claude" className="font-cond text-2xl font-semibold">
+                Claudes Meinung
+              </h2>
+              <div className="mt-3">
+                <ClaudeVerdict listing={l} full />
+              </div>
+            </section>
+          )}
+
           {(l.ai_summary || l.score_reasons.length > 0 || issues.length > 0) && (
             <section aria-labelledby="einschaetzung">
               <h2 id="einschaetzung" className="font-cond text-2xl font-semibold">
-                Einschätzung der Suche
+                Begründung der Passung
               </h2>
               {l.ai_summary && <p className="mt-2 max-w-[68ch]">{l.ai_summary}</p>}
               {l.score_reasons.length > 0 && (
