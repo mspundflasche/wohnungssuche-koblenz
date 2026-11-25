@@ -7,6 +7,28 @@ import { VERDICT_COLOR, INK } from "@/lib/colors";
 import { fmtEur, OFFER_LABEL } from "@/lib/format";
 import type { Listing, Verdict } from "@/lib/types";
 
+/*
+  Grundkarte:
+  - Ohne Schlüssel: OpenStreetMap-Standardkacheln (kein API-Schlüssel nötig, Namensnennung Pflicht,
+    nur normales Anzeigen – kein Vorladen ganzer Gebiete, siehe operations.osmfoundation.org/policies/tiles).
+  - Mit NEXT_PUBLIC_CARTO_BASEMAP_KEY: ruhigere CARTO-Karte „Voyager“ (kostenloser Schlüssel unter
+    carto.com/basemaps/apikey).
+*/
+const OSM_ATTRIBUTION = '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>-Mitwirkende';
+const CARTO_KEY = process.env.NEXT_PUBLIC_CARTO_BASEMAP_KEY;
+const BASEMAP = CARTO_KEY
+  ? {
+      url: `https://basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png?key=${encodeURIComponent(CARTO_KEY)}`,
+      attribution: `${OSM_ATTRIBUTION}, &copy; <a href="https://carto.com/attribution/">CARTO</a>`,
+      className: "",
+    }
+  : {
+      url: "https://tile.openstreetmap.org/{z}/{x}/{y}.png",
+      attribution: OSM_ATTRIBUTION,
+      // etwas entsättigt, damit die farbigen Pins hervortreten
+      className: "karte-ruhig",
+    };
+
 export interface MapProps {
   listings: Listing[];
   verdicts: Map<string, Verdict>;
@@ -50,12 +72,7 @@ export default function ListingMap({ listings, verdicts, center, radiusKm, selec
 
   return (
     <MapContainer center={center} zoom={10} scrollWheelZoom className="h-full w-full" attributionControl>
-      <TileLayer
-        attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>-Mitwirkende &copy; <a href="https://carto.com/attributions">CARTO</a>'
-        url="https://{s}.basemaps.cartocdn.com/rastertiles/voyager_labels_under/{z}/{x}/{y}{r}.png"
-        subdomains="abcd"
-        maxZoom={19}
-      />
+      <TileLayer key={BASEMAP.url} url={BASEMAP.url} attribution={BASEMAP.attribution} maxZoom={19} className={BASEMAP.className} />
       <Circle
         center={center}
         radius={radiusKm * 1000}

@@ -127,6 +127,10 @@ body {
   font-family: var(--font-sans);
   background: #e4e8e6;
 }
+.leaflet-tile.karte-ruhig,
+.karte-ruhig .leaflet-tile {
+  filter: saturate(0.45) brightness(1.04) contrast(0.95);
+}
 .leaflet-tooltip.karten-tooltip {
   border: 1px solid var(--color-linie);
   border-radius: 6px;
